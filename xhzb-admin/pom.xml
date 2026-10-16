@@ -54,6 +54,12 @@
             <artifactId>xhzb-generator</artifactId>
         </dependency>
 
+        <!-- 养老模块 -->
+        <dependency>
+            <groupId>com.xhzb</groupId>
+            <artifactId>xhzb-nursing-platform</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

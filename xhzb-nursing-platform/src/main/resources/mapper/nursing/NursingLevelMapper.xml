@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xhzb.nursing.mapper.NursingLevelMapper">
+
+	<resultMap type="NursingLevel" id="NursingLevelResult">
+		<id     property="id"              column="id"               />
+		<result property="name"            column="name"             />
+		<result property="lplanId"         column="lplan_id"         />
+		<result property="fee"             column="fee"              />
+		<result property="description"     column="description"      />
+		<result property="status"          column="status"           />
+		<result property="createBy"        column="create_by"        />
+		<result property="createTime"      column="create_time"      />
+		<result property="updateBy"        column="update_by"        />
+		<result property="updateTime"      column="update_time"      />
+		<result property="remark"          column="remark"           />
+	</resultMap>
+
+	<!-- 列表用：额外关联出护理计划名称 -->
+	<resultMap type="NursingLevel" id="NursingLevelNursingPlanResult" extends="NursingLevelResult">
+		<result property="nursingPlanName" column="nursing_plan_name" />
+	</resultMap>
+
+	<sql id="selectNursingLevelVo">
+        select id, name, lplan_id, fee, description, status, create_by, create_time, update_by, update_time, remark
+		from nursing_level
+    </sql>
+
+	<select id="selectNursingLevelList" parameterType="NursingLevel" resultMap="NursingLevelNursingPlanResult">
+		select l.id, l.name, l.lplan_id, l.fee, l.description, l.status, l.create_by, l.create_time,
+			   l.update_by, l.update_time, l.remark, p.plan_name as nursing_plan_name
+		from nursing_level l
+			left join nursing_plan p on p.id = l.lplan_id
+		<where>
+			<if test="name != null and name != ''">
+				AND l.name like concat('%', #{name}, '%')
+			</if>
+			<if test="status != null">
+				AND l.status = #{status}
+			</if>
+		</where>
+		order by l.id
+	</select>
+
+	<select id="selectNursingLevelAll" resultMap="NursingLevelResult">
+		<include refid="selectNursingLevelVo"/>
+		order by id
+	</select>
+
+	<select id="selectNursingLevelById" parameterType="Long" resultMap="NursingLevelResult">
+		<include refid="selectNursingLevelVo"/>
+		where id = #{id}
+	</select>
+
+	<select id="checkNameUnique" parameterType="String" resultMap="NursingLevelResult">
+		<include refid="selectNursingLevelVo"/>
+		 where name = #{name} limit 1
+	</select>
+
+	<insert id="insertNursingLevel" parameterType="NursingLevel" useGeneratedKeys="true" keyProperty="id">
+ 		insert into nursing_level(
+ 			<if test="name != null and name != ''">name,</if>
+ 			<if test="lplanId != null">lplan_id,</if>
+ 			<if test="fee != null">fee,</if>
+ 			<if test="description != null and description != ''">description,</if>
+ 			<if test="status != null">status,</if>
+ 			<if test="remark != null and remark != ''">remark,</if>
+ 			<if test="createBy != null and createBy != ''">create_by,</if>
+ 			create_time
+ 		)values(
+ 			<if test="name != null and name != ''">#{name},</if>
+ 			<if test="lplanId != null">#{lplanId},</if>
+ 			<if test="fee != null">#{fee},</if>
+ 			<if test="description != null and description != ''">#{description},</if>
+ 			<if test="status != null">#{status},</if>
+ 			<if test="remark != null and remark != ''">#{remark},</if>
+ 			<if test="createBy != null and createBy != ''">#{createBy},</if>
+ 			sysdate()
+ 		)
+	</insert>
+
+	<update id="updateNursingLevel" parameterType="NursingLevel">
+ 		update nursing_level
+ 		<set>
+ 			<if test="name != null and name != ''">name = #{name},</if>
+ 			<if test="lplanId != null">lplan_id = #{lplanId},</if>
+ 			<if test="fee != null">fee = #{fee},</if>
+ 			<if test="description != null">description = #{description},</if>
+ 			<if test="status != null">status = #{status},</if>
+ 			<if test="remark != null">remark = #{remark},</if>
+ 			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+ 			update_time = sysdate()
+ 		</set>
+ 		where id = #{id}
+	</update>
+
+	<delete id="deleteNursingLevelById" parameterType="Long">
+		delete from nursing_level where id = #{id}
+	</delete>
+
+</mapper>
