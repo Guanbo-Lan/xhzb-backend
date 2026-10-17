@@ -96,13 +96,29 @@ public class NursingLevelController extends BaseController
     }
 
     /**
+     * 修改护理等级状态（启用/禁用）
+     */
+    @PreAuthorize("@ss.hasPermi('nursing:level:edit')")
+    @Log(title = "护理等级", businessType = BusinessType.UPDATE)
+    @PutMapping("/changeStatus")
+    public AjaxResult changeStatus(@RequestBody NursingLevel nursingLevel)
+    {
+        if (nursingLevel.getId() == null || nursingLevel.getStatus() == null)
+        {
+            return error("护理等级ID和状态不能为空");
+        }
+        nursingLevel.setUpdateBy(getUserId().toString());
+        return toAjax(nursingLevelService.updateNursingLevelStatus(nursingLevel));
+    }
+
+    /**
      * 删除护理等级
      */
     @PreAuthorize("@ss.hasPermi('nursing:level:remove')")
     @Log(title = "护理等级", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{id}")
-    public AjaxResult remove(@PathVariable Long id)
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(nursingLevelService.deleteNursingLevelById(id));
+        return toAjax(nursingLevelService.deleteNursingLevelByIds(ids));
     }
 }

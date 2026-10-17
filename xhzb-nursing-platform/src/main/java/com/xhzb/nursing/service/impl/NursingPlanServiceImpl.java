@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.xhzb.common.constant.UserConstants;
+import com.xhzb.common.exception.ServiceException;
 import com.xhzb.common.utils.StringUtils;
 import com.xhzb.nursing.domain.NursingPlan;
 import com.xhzb.nursing.domain.NursingProjectPlan;
+import com.xhzb.nursing.mapper.NursingLevelMapper;
 import com.xhzb.nursing.mapper.NursingPlanMapper;
 import com.xhzb.nursing.mapper.NursingProjectPlanMapper;
 import com.xhzb.nursing.service.INursingPlanService;
@@ -25,6 +27,9 @@ public class NursingPlanServiceImpl implements INursingPlanService
 
     @Autowired
     private NursingProjectPlanMapper nursingProjectPlanMapper;
+
+    @Autowired
+    private NursingLevelMapper nursingLevelMapper;
 
     /**
      * 查询护理计划列表
@@ -113,17 +118,38 @@ public class NursingPlanServiceImpl implements INursingPlanService
     }
 
     /**
-     * 删除护理计划（级联删除护理项目明细）
+     * 修改护理计划状态
      *
-     * @param id 护理计划ID
+     * @param nursingPlan 护理计划（id、status）
+     * @return 结果
+     */
+    @Override
+    public int updateNursingPlanStatus(NursingPlan nursingPlan)
+    {
+        return nursingPlanMapper.updateNursingPlanStatus(nursingPlan);
+    }
+
+    /**
+     * 批量删除护理计划（级联删除护理项目明细）
+     * 已被护理等级引用的计划不允许删除，避免护理等级失去关联的计划
+     *
+     * @param ids 需要删除的护理计划ID数组
      * @return 结果
      */
     @Override
     @Transactional
-    public int deleteNursingPlanById(Long id)
+    public int deleteNursingPlanByIds(Long[] ids)
     {
-        nursingProjectPlanMapper.deleteByPlanId(id);
-        return nursingPlanMapper.deleteNursingPlanById(id);
+        for (Long id : ids)
+        {
+            NursingPlan nursingPlan = nursingPlanMapper.selectNursingPlanById(id);
+            if (StringUtils.isNotNull(nursingPlan) && nursingLevelMapper.countByPlanId(id) > 0)
+            {
+                throw new ServiceException(String.format("%1$s已关联护理等级，不能删除", nursingPlan.getPlanName()));
+            }
+            nursingProjectPlanMapper.deleteByPlanId(id);
+        }
+        return nursingPlanMapper.deleteNursingPlanByIds(ids);
     }
 
     /**

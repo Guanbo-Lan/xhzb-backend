@@ -27,6 +27,14 @@ public interface NursingProjectPlanMapper
     public int insertBatch(List<NursingProjectPlan> projectPlans);
 
     /**
+     * 根据护理项目ID统计被护理计划引用的数量
+     *
+     * @param projectId 护理项目ID
+     * @return 引用数量
+     */
+    public int countByProjectId(Long projectId);
+
+    /**
      * 根据护理计划ID删除护理项目明细
      *
      * @param planId 护理计划ID

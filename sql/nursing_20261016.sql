@@ -37,6 +37,14 @@ insert into sys_dict_data values(106, 1, '天',   '0', 'nursing_execute_cycle', 
 insert into sys_dict_data values(107, 2, '周',   '1', 'nursing_execute_cycle', '', 'success', 'N', '0', 'admin', sysdate(), '', null, '每周执行');
 insert into sys_dict_data values(108, 3, '月',   '2', 'nursing_execute_cycle', '', 'warning', 'N', '0', 'admin', sysdate(), '', null, '每月执行');
 
+-- 护理项目状态字典配色：启用为绿色（success），禁用为红色（danger），与页面原型保持一致
+update sys_dict_data set list_class = 'success' where dict_type = 'nursing_project_status' and dict_value = '1';
+update sys_dict_data set list_class = 'danger'  where dict_type = 'nursing_project_status' and dict_value = '0';
+update sys_dict_data set list_class = 'success' where dict_type = 'nursing_plan_status'    and dict_value = '1';
+update sys_dict_data set list_class = 'danger'  where dict_type = 'nursing_plan_status'    and dict_value = '0';
+update sys_dict_data set list_class = 'success' where dict_type = 'nursing_level_status'   and dict_value = '1';
+update sys_dict_data set list_class = 'danger'  where dict_type = 'nursing_level_status'   and dict_value = '0';
+
 -- ----------------------------
 -- 3、菜单与按钮权限
 -- 上级：menu_id = 2000「服务管理」（path = serve，已存在）

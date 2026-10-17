@@ -58,10 +58,18 @@ public interface NursingPlanMapper
     public int updateNursingPlan(NursingPlan nursingPlan);
 
     /**
-     * 删除护理计划
+     * 修改护理计划状态
      *
-     * @param id 护理计划ID
+     * @param nursingPlan 护理计划（id、status）
      * @return 结果
      */
-    public int deleteNursingPlanById(Long id);
+    public int updateNursingPlanStatus(NursingPlan nursingPlan);
+
+    /**
+     * 批量删除护理计划
+     *
+     * @param ids 需要删除的护理计划ID数组
+     * @return 结果
+     */
+    public int deleteNursingPlanByIds(Long[] ids);
 }

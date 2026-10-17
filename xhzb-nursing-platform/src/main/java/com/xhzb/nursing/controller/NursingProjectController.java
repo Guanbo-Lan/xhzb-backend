@@ -96,13 +96,29 @@ public class NursingProjectController extends BaseController
     }
 
     /**
+     * 修改护理项目状态（启用/禁用）
+     */
+    @PreAuthorize("@ss.hasPermi('nursing:project:edit')")
+    @Log(title = "护理项目", businessType = BusinessType.UPDATE)
+    @PutMapping("/changeStatus")
+    public AjaxResult changeStatus(@RequestBody NursingProject nursingProject)
+    {
+        if (nursingProject.getId() == null || nursingProject.getStatus() == null)
+        {
+            return error("护理项目ID和状态不能为空");
+        }
+        nursingProject.setUpdateBy(getUserId().toString());
+        return toAjax(nursingProjectService.updateNursingProjectStatus(nursingProject));
+    }
+
+    /**
      * 删除护理项目
      */
     @PreAuthorize("@ss.hasPermi('nursing:project:remove')")
     @Log(title = "护理项目", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{id}")
-    public AjaxResult remove(@PathVariable Long id)
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(nursingProjectService.deleteNursingProjectById(id));
+        return toAjax(nursingProjectService.deleteNursingProjectByIds(ids));
     }
 }

@@ -58,10 +58,18 @@ public interface INursingLevelService
     public int updateNursingLevel(NursingLevel nursingLevel);
 
     /**
-     * 删除护理等级
+     * 修改护理等级状态（启用/禁用）
      *
-     * @param id 护理等级ID
+     * @param nursingLevel 护理等级（id、status）
      * @return 结果
      */
-    public int deleteNursingLevelById(Long id);
+    public int updateNursingLevelStatus(NursingLevel nursingLevel);
+
+    /**
+     * 批量删除护理等级
+     *
+     * @param ids 需要删除的护理等级ID数组
+     * @return 结果
+     */
+    public int deleteNursingLevelByIds(Long[] ids);
 }

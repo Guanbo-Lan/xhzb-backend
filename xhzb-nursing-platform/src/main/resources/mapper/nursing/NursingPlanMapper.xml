@@ -37,12 +37,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				AND status = #{status}
 			</if>
 		</where>
-		order by sort_no, id
+		order by ifnull(sort_no, 9999), id
 	</select>
 
 	<select id="selectNursingPlanAll" resultMap="NursingPlanResult">
 		<include refid="selectNursingPlanVo"/>
-		order by sort_no, id
+		order by ifnull(sort_no, 9999), id
 	</select>
 
 	<select id="selectNursingPlanById" parameterType="Long" resultMap="NursingPlanNursingProjectPlanResult">
@@ -86,8 +86,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  		where id = #{id}
 	</update>
 
-	<delete id="deleteNursingPlanById" parameterType="Long">
-		delete from nursing_plan where id = #{id}
+	<update id="updateNursingPlanStatus" parameterType="NursingPlan">
+ 		update nursing_plan
+ 		set status = #{status},
+ 			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+ 			update_time = sysdate()
+ 		where id = #{id}
+	</update>
+
+	<delete id="deleteNursingPlanByIds" parameterType="Long">
+		delete from nursing_plan where id in
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
 	</delete>
 
 </mapper>

@@ -41,6 +41,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</foreach>
 	</insert>
 
+	<select id="countByProjectId" parameterType="Long" resultType="int">
+		select count(1) from nursing_project_plan where project_id = #{projectId}
+	</select>
+
 	<delete id="deleteByPlanId" parameterType="Long">
 		delete from nursing_project_plan where plan_id = #{planId}
 	</delete>

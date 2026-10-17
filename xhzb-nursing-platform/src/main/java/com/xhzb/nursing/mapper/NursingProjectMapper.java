@@ -59,10 +59,18 @@ public interface NursingProjectMapper
     public int updateNursingProject(NursingProject nursingProject);
 
     /**
-     * 删除护理项目
+     * 修改护理项目状态
      *
-     * @param id 护理项目ID
+     * @param nursingProject 护理项目（id、status）
      * @return 结果
      */
-    public int deleteNursingProjectById(Long id);
+    public int updateNursingProjectStatus(NursingProject nursingProject);
+
+    /**
+     * 批量删除护理项目
+     *
+     * @param ids 需要删除的护理项目ID数组
+     * @return 结果
+     */
+    public int deleteNursingProjectByIds(Long[] ids);
 }

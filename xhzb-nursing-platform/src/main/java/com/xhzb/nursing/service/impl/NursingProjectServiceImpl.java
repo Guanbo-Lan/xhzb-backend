@@ -3,11 +3,14 @@ package com.xhzb.nursing.service.impl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.xhzb.common.constant.UserConstants;
+import com.xhzb.common.exception.ServiceException;
 import com.xhzb.common.utils.StringUtils;
 import com.xhzb.nursing.domain.NursingProject;
 import com.xhzb.nursing.domain.vo.SelectOptionVo;
 import com.xhzb.nursing.mapper.NursingProjectMapper;
+import com.xhzb.nursing.mapper.NursingProjectPlanMapper;
 import com.xhzb.nursing.service.INursingProjectService;
 
 /**
@@ -20,6 +23,9 @@ public class NursingProjectServiceImpl implements INursingProjectService
 {
     @Autowired
     private NursingProjectMapper nursingProjectMapper;
+
+    @Autowired
+    private NursingProjectPlanMapper nursingProjectPlanMapper;
 
     /**
      * 查询护理项目列表
@@ -99,14 +105,36 @@ public class NursingProjectServiceImpl implements INursingProjectService
     }
 
     /**
-     * 删除护理项目
+     * 修改护理项目状态
      *
-     * @param id 护理项目ID
+     * @param nursingProject 护理项目（id、status）
      * @return 结果
      */
     @Override
-    public int deleteNursingProjectById(Long id)
+    public int updateNursingProjectStatus(NursingProject nursingProject)
     {
-        return nursingProjectMapper.deleteNursingProjectById(id);
+        return nursingProjectMapper.updateNursingProjectStatus(nursingProject);
+    }
+
+    /**
+     * 批量删除护理项目
+     * 已被护理计划引用的项目不允许删除，避免产生无效的护理计划明细
+     *
+     * @param ids 需要删除的护理项目ID数组
+     * @return 结果
+     */
+    @Override
+    @Transactional
+    public int deleteNursingProjectByIds(Long[] ids)
+    {
+        for (Long id : ids)
+        {
+            NursingProject nursingProject = nursingProjectMapper.selectNursingProjectById(id);
+            if (StringUtils.isNotNull(nursingProject) && nursingProjectPlanMapper.countByProjectId(id) > 0)
+            {
+                throw new ServiceException(String.format("%1$s已关联护理计划，不能删除", nursingProject.getName()));
+            }
+        }
+        return nursingProjectMapper.deleteNursingProjectByIds(ids);
     }
 }

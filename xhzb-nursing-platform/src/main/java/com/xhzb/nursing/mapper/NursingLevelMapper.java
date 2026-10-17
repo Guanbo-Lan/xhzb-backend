@@ -58,10 +58,26 @@ public interface NursingLevelMapper
     public int updateNursingLevel(NursingLevel nursingLevel);
 
     /**
-     * 删除护理等级
+     * 统计引用指定护理计划的护理等级数量
      *
-     * @param id 护理等级ID
+     * @param planId 护理计划ID
+     * @return 数量
+     */
+    public int countByPlanId(Long planId);
+
+    /**
+     * 修改护理等级状态
+     *
+     * @param nursingLevel 护理等级（id、status）
      * @return 结果
      */
-    public int deleteNursingLevelById(Long id);
+    public int updateNursingLevelStatus(NursingLevel nursingLevel);
+
+    /**
+     * 批量删除护理等级
+     *
+     * @param ids 需要删除的护理等级ID数组
+     * @return 结果
+     */
+    public int deleteNursingLevelByIds(Long[] ids);
 }

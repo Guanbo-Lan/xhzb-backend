@@ -96,13 +96,29 @@ public class NursingPlanController extends BaseController
     }
 
     /**
+     * 修改护理计划状态（启用/禁用）
+     */
+    @PreAuthorize("@ss.hasPermi('nursing:plan:edit')")
+    @Log(title = "护理计划", businessType = BusinessType.UPDATE)
+    @PutMapping("/changeStatus")
+    public AjaxResult changeStatus(@RequestBody NursingPlan nursingPlan)
+    {
+        if (nursingPlan.getId() == null || nursingPlan.getStatus() == null)
+        {
+            return error("护理计划ID和状态不能为空");
+        }
+        nursingPlan.setUpdateBy(getUserId().toString());
+        return toAjax(nursingPlanService.updateNursingPlanStatus(nursingPlan));
+    }
+
+    /**
      * 删除护理计划
      */
     @PreAuthorize("@ss.hasPermi('nursing:plan:remove')")
     @Log(title = "护理计划", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{id}")
-    public AjaxResult remove(@PathVariable Long id)
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(nursingPlanService.deleteNursingPlanById(id));
+        return toAjax(nursingPlanService.deleteNursingPlanByIds(ids));
     }
 }
