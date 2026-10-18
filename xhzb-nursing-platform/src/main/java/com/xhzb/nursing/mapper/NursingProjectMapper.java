@@ -3,12 +3,14 @@ package com.xhzb.nursing.mapper;
 import java.util.List;
 import com.xhzb.nursing.domain.NursingProject;
 import com.xhzb.nursing.domain.vo.SelectOptionVo;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 护理项目 数据层
  *
  * @author xhzb
  */
+@Mapper
 public interface NursingProjectMapper
 {
     /**

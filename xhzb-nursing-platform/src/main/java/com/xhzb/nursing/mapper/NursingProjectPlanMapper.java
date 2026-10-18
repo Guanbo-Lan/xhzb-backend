@@ -2,12 +2,14 @@ package com.xhzb.nursing.mapper;
 
 import java.util.List;
 import com.xhzb.nursing.domain.NursingProjectPlan;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 护理计划项目关联 数据层
  *
  * @author xhzb
  */
+@Mapper
 public interface NursingProjectPlanMapper
 {
     /**
